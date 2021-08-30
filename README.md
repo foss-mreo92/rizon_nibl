@@ -97,8 +97,13 @@ Install [Termux](https://termux.com/). Open Termux and run these lines -
 > pkg install tmux irssi bc jq -y
 
 ---
+**Credits**:
+
+To the developer who built the [APIs](https://api.nibl.co.uk/swagger-ui.html)
+
 
 **Disclaimer / Notice**: 
+
 Not encouraging piracy. Just demonstrating a simple bash script one can use to download files on IRC with just a couple of clicks.
 
 I am new to Bash scripting and this script is probably as ineffecient as it can get (but it does the job for me) :slightly_smiling_face: I would love to hear from someone experienced in Bash scripting to point me in the right direction!
