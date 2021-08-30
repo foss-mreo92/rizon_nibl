@@ -89,11 +89,15 @@ Irssi being a command line client does all the magic here so you can reuse the s
 ---
 
 **Dependancies (Linux)** -
+
 > sudo apt-get install tmux irssi bc jq -y
 
 **Dependancies (Android)** -
+
 Install [Termux](https://termux.com/). Open Termux and run these lines -
+
 > termux-setup-storage
+
 > pkg install tmux irssi bc jq -y
 
 ---
