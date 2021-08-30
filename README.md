@@ -72,8 +72,6 @@ A simple Bash script to download anime from Rizon #nibl using Irssi chat client.
    
 7. Downloading
 
-   > Download directory = /home/user/Downloads
-
    > (Hi10)_Arakawa_Under_the_Bridg... - 117MB - 2M 20S [100%]
 
    > Waiting for 5 seconds for file to save
