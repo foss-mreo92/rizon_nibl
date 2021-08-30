@@ -88,16 +88,17 @@ It will then auto-open your default media player and start playing the content.
 
 Irssi being a command line client does all the magic here so you can reuse the script for any XDCC download needs that you may have.
 
+---
 
 **Dependancies (Linux)** -
 > sudo apt-get install tmux irssi bc jq -y
 
 **Dependancies (Android)** -
-Install [Termux](https://termux.com/)
-Open Termux and run these lines
+Install [Termux](https://termux.com/). Open Termux and run these lines -
 > termux-setup-storage
 > pkg install tmux irssi bc jq -y
 
+---
 
 **Disclaimer / Notice**: 
 Not encouraging piracy. Just demonstrating a simple bash script one can use to download files on IRC with just a couple of clicks.
