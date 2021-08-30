@@ -8,9 +8,9 @@ A simple Bash script to download anime from Rizon #nibl using Irssi chat client.
 
 1. Get Input
 
-   > Enter Search Query [Example, One Piece 1080p]: Arakawa
+   > Enter Search Query [Example, One Piece 1080p]: **Arakawa**
 
-   > Enter Episode Number [Example, 15]: 6
+   > Enter Episode Number [Example, 15]: **6**
 
 2. Fetching Packages
 
@@ -32,7 +32,7 @@ A simple Bash script to download anime from Rizon #nibl using Irssi chat client.
 
    > Bot ID = 962
  
-     Would you like to proceed with above package [1]: ? [Y/n] n
+     Would you like to proceed with above package [1]: ? [Y/n] **n**
 
    > Package Number [2] = 789
 
@@ -44,7 +44,7 @@ A simple Bash script to download anime from Rizon #nibl using Irssi chat client.
 
    > Bot ID = 962
 
-     Would you like to proceed with above package [2]: ? [Y/n] y
+     Would you like to proceed with above package [2]: ? [Y/n] **y**
 
 4. Fetching Bot Details
 
@@ -76,7 +76,7 @@ A simple Bash script to download anime from Rizon #nibl using Irssi chat client.
 
    > Waiting for 5 seconds for file to save
 
-Press any key to kill irssi and close this terminal
+Press **any key** to kill irssi and close this terminal
 
 Enjoy your content!
 
@@ -88,11 +88,11 @@ Irssi being a command line client does all the magic here so you can reuse the s
 
 ---
 
-**Dependancies (Linux)** -
+**Dependencies (Linux)** -
 
 > sudo apt-get install tmux irssi bc jq -y
 
-**Dependancies (Android)** -
+**Dependencies (Android)** -
 
 Install [Termux](https://termux.com/). Open Termux and run these lines -
 
