@@ -1,14 +1,13 @@
 <pre>
 # rizon_nibl
 
-A simple Bash script to download anime from Rizon #nibl using NodeJS packages such as irc, xdcc and progress. You can batch your downloads as well.
-
-<hr/>
-<b>Sample run of the script pasted below</b> -
+A simple Bash script to download anime from Rizon #nibl using NodeJS packages such as irc, xdcc and progress. 
+You can batch your downloads as well.
+<hr/><b>Sample run of the script pasted below</b> -
 
 <b>0. Checking dependencies</b>
 
-Dependencies check <b><span style="color🥬">passed!</span></b>
+Dependencies check <b>passed!</b>
 
 <b>1. Fetching Bots</b>
 
@@ -18,8 +17,8 @@ Dependencies check <b><span style="color🥬">passed!</span></b>
 
 <b>2. Get Input</b>
 
-<b><span style="color🥬">Enter Search Query</span></b> [Example, One Piece 1080p]: One Piece
-<b><span style="color🥬">Enter Episode Number</span></b> [Example, 15 or 15-20 or 15,17,21]: 7-9 
+<b>Enter Search Query</b> [Example, One Piece 1080p]: One Piece
+<b>Enter Episode Number</b> [Example, 15 or 15-20 or 15,17,21]: 7-9 
 
 <b>3. Fetching Packages (per episode)</b>
 
@@ -57,7 +56,7 @@ Dependencies check <b><span style="color🥬">passed!</span></b>
 
 <b>4. Select Packages</b>
 
-<b><span style="color🥬">Select from List</span></b> [Example, 3,6,10]: 9,19,28
+<b>Select from List</b> [Example, 3,6,10]: 9,19,28
 
 <b>5. Downloading Packages</b>
 
@@ -70,25 +69,18 @@ Dependencies check <b><span style="color🥬">passed!</span></b>
 3. [K-F_AKUPX]_One_Piece_009_[4984356F].avi
    [========================================] 100%, 0.0s remaining
    
-Press <b><span style="color🥬">any key</span></b> to exit
-<hr/>
-It will then auto-open your downloads folder upon completion.
-<hr/>
-<b>Dependencies (Linux)</b> -
-
+Press <b>any key</b> to exit
+<hr/><b>Dependencies (Linux)</b> -
 download both irssi_nibl_batch.sh, irc-download.js files in same directory
 > sudo apt install curl jq grep node
 > sudo npm install -g irc xdcc progress
-<hr/>
+
 <b>Usage</b> -
-
 Open your linux terminal and run ./irssi_nibl_batch.sh
-<hr/>
-<b>Credits</b>:
 
+<b>Credits</b>:
 To the developer who built the [APIs](https://api.nibl.co.uk/swagger-ui.html)
 
-<b>Disclaimer / Notice</b>: 
-
+<b>Disclaimer / Notice</b>:
 Not encouraging piracy. Just demonstrating a simple bash script to download files on IRC.
 </pre>
