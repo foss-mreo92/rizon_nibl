@@ -71,7 +71,7 @@ Dependencies check <b>passed!</b>
    
 Press <b>any key</b> to exit
 <hr/><b>Dependencies (Linux)</b> -
-download both irssi_nibl_batch.sh, irc-download.js files in same directory
+download both <a href="https://github.com/foss-mreo92/rizon_nibl/blob/main/irssi_nibl.sh" target="_blank">irssi_nibl_batch.sh</a>, <a href="https://github.com/foss-mreo92/rizon_nibl/blob/main/irc-download.js" target="_blank">irc-download.js</a> files in same directory
 > sudo apt install curl jq grep node
 > sudo npm install -g irc xdcc progress
 
@@ -79,7 +79,7 @@ download both irssi_nibl_batch.sh, irc-download.js files in same directory
 Open your linux terminal and run ./irssi_nibl_batch.sh
 
 <b>Credits</b>:
-To the developer who built the [APIs](https://api.nibl.co.uk/swagger-ui.html)
+To the developer who built the <a href="https://api.nibl.co.uk/swagger-ui.html" target="_blank">APIs</a>
 
 <b>Disclaimer / Notice</b>:
 Not encouraging piracy. Just demonstrating a simple bash script to download files on IRC.
