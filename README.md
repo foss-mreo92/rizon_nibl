@@ -1,27 +1,27 @@
+<pre>
 # rizon_nibl
 
 A simple Bash script to download anime from Rizon #nibl using NodeJS packages such as irc, xdcc and progress. You can batch your downloads as well.
 
----
+<hr/>
+<b>Sample run of the script pasted below</b> -
 
-**Sample run of the script pasted below** -
+<b>0. Checking dependencies</b>
 
-**0. Checking dependencies**
+Dependencies check <b><span style="color🥬">passed!</span></b>
 
-Dependencies check **passed!**
-
-**1. Fetching Bots**
+<b>1. Fetching Bots</b>
 
    > URL = https://api.nibl.co.uk/nibl/bots/
    > Status = OK
    > Available Bots = 58
 
-**2. Get Input**
+<b>2. Get Input</b>
 
-**Enter Search Query** [Example, One Piece 1080p]: One Piece
-**Enter Episode Number** [Example, 15 or 15-20 or 15,17,21]: 7-9 
+<b><span style="color🥬">Enter Search Query</span></b> [Example, One Piece 1080p]: One Piece
+<b><span style="color🥬">Enter Episode Number</span></b> [Example, 15 or 15-20 or 15,17,21]: 7-9 
 
-**3. Fetching Packages (per episode)**
+<b>3. Fetching Packages (per episode)</b>
 
 #ID| Size | #Episode| Package Name
 --------------------------------------------------
@@ -55,11 +55,11 @@ Dependencies check **passed!**
  28| 176M |        9| [K-F_AKUPX]_One_Piece_009_[4984356F].avi
  29| 1.4G |        9| [yibis]_One_Piece_Movie_9_[720p][780350D8].mkv
 
-**4. Select Packages**
+<b>4. Select Packages</b>
 
-**Select from List** [Example, 3,6,10]: 9,19,28
+<b><span style="color🥬">Select from List</span></b> [Example, 3,6,10]: 9,19,28
 
-**5. Downloading Packages**
+<b>5. Downloading Packages</b>
 
 1. [K-F_AKUPX]_One_Piece_007_[CFA2D23E].avi
    [========================================] 100%, 0.0s remaining
@@ -70,32 +70,25 @@ Dependencies check **passed!**
 3. [K-F_AKUPX]_One_Piece_009_[4984356F].avi
    [========================================] 100%, 0.0s remaining
    
-Press **any key** to exit
-
----
-
+Press <b><span style="color🥬">any key</span></b> to exit
+<hr/>
 It will then auto-open your downloads folder upon completion.
+<hr/>
+<b>Dependencies (Linux)</b> -
 
----
-
-**Dependencies (Linux)** -
-
-> download both irssi_nibl_batch.sh, irc-download.js files in same directory
+download both irssi_nibl_batch.sh, irc-download.js files in same directory
 > sudo apt install curl jq grep node
 > sudo npm install -g irc xdcc progress
-
----
-
-**Usage** -
+<hr/>
+<b>Usage</b> -
 
 Open your linux terminal and run ./irssi_nibl_batch.sh
-
----
-
-**Credits**:
+<hr/>
+<b>Credits</b>:
 
 To the developer who built the [APIs](https://api.nibl.co.uk/swagger-ui.html)
 
-**Disclaimer / Notice**: 
+<b>Disclaimer / Notice</b>: 
 
 Not encouraging piracy. Just demonstrating a simple bash script to download files on IRC.
+</pre>
