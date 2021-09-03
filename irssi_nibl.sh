@@ -1,164 +1,207 @@
 #!/bin/bash
 # 0. Initialize
-mytitle="Downloading from irc.rizon.net #NIBL"
+mytitle="Rizon #NIBL Downloader"
 echo -e '\033]2;'$mytitle'\007'
-cd ~/Downloads/
 red="$(tput setaf 1)"
 green="$(tput setaf 2)"
 bold="$(tput bold)"
 reset="$(tput sgr0)"
+# Error Handling: Fail the script as soon as an invalid password has been entered
+function exitNow {
+	echo
+	read -n 1 -s -r -p "Press ${green}${bold}any key${reset} to exit"
+	exit
+}
+set -eE
+trap 'exitNow' ERR
 
-# 1. Get Input
+
+# 0. Check dependencies
 clear
-echo "${bold}1. Get Input${reset}"
-read -p "${green}${bold}Enter Search Query${reset} [Example, One Piece 1080p]: " input_query
-input_query=$(echo ${input_query// /"%20"})
-read -p "${green}${bold}Enter Episode Number${reset} [Example, 15]: " input_episodeNumber
+echo "${bold}0. Checking dependencies${reset}"
 echo
-
-# 2. Fetch Packages
-echo "${bold}2. Fetching Packages${reset}"
-packageRequest_url=$(echo "https://api.nibl.co.uk/nibl/search?query=$input_query&episodeNumber=$input_episodeNumber")
-packageRequest=$(curl -s -X GET --header 'Accept: application/json' "$packageRequest_url")
-packageRequest_status=$(echo $packageRequest | jq -r '.status')
-packageRequest_contents=$(echo $packageRequest | jq -r '.content')
-packageRequest_length=$(echo $packageRequest_contents | jq 'length')
-echo "   > URL = $packageRequest_url"
-echo "   > Status = $packageRequest_status"
-echo "   > Available Packages = $packageRequest_length"
-echo
-
-# 3. Select Package
-echo "${bold}3. Select Package${reset}"
-echo
-packageRequest_arrayLength=$((packageRequest_length-1))
-for package_i in $(seq 0 $packageRequest_arrayLength)
+missing="no"
+dependencies=("curl" "jq" "grep" "node")
+for dependencies_i in $(seq 0 $((${#dependencies[@]}-1)))
 do
-	packageRequest_botId=$(echo $packageRequest_contents | jq -r --argjson package_i "$package_i" '.[$package_i].botId')
-	packageRequest_number=$(echo $packageRequest_contents | jq -r --argjson package_i "$package_i" '.[$package_i].number')
-	packageRequest_name=$(echo $packageRequest_contents | jq -r --argjson package_i "$package_i" '.[$package_i].name')
-	packageRequest_sizekbits=$(echo $packageRequest_contents | jq -r --argjson package_i "$package_i" '.[$package_i].sizekbits')
-	packageRequest_sizeMB=$((packageRequest_sizekbits/(1024*1024)))
-	echo "   > Package Number ["$((package_i+1))"] = $packageRequest_number"
-	echo "   > Package Name = $packageRequest_name"
-	echo "   > Package Size (Bytes) = $packageRequest_sizekbits"
-	echo "   > Package Size (MBs) = $packageRequest_sizeMB"
-	echo "   > Bot ID = $packageRequest_botId"
-	read -r -p "     ${bold}Would you like to proceed with above package ["$((package_i+1))"]: ? ${red}[Y/n]${reset} " input
-    	case $input in
-		[yY][eE][sS]|[yY])
-	     	break;
-	;;
-	esac
-	echo
+	exists=$(type ${dependencies[$dependencies_i]} &>/dev/null || echo "no")
+	if [[ "$exists" == "no" ]]; then
+		echo "Missing ${dependencies[$dependencies_i]}:"
+		echo "   > sudo apt install ${dependencies[$dependencies_i]} -y"
+		missing="yes"
+	fi
 done
-echo
-
-# 4. Find Bot Name
-echo "${bold}4. Fetching Bot Details${reset}"
-botRequest_url=$(echo "https://api.nibl.co.uk/nibl/bots/$packageRequest_botId")
-botRequest=$(curl -s -X GET --header 'Accept: application/json' "$botRequest_url")
-botRequest_status=$(echo $botRequest | jq -r '.status')
-botRequest_name=$(echo $botRequest | jq -r '.content.name')
-echo "   > URL = $botRequest_url"
-echo "   > Status = $botRequest_status"
-echo "   > Bot Name = $botRequest_name"
-echo
-
-# 5. Generate XDCC command
-echo "${bold}5. Generating Bot Message${reset}"
-command=$(echo "/msg $botRequest_name xdcc send #$packageRequest_number")
-if [[ $packageRequest_status == "OK" ]] && [[ "$botRequest_status" == "OK" ]];
-then
-	echo "   > ${green}${bold}Success!${reset}"
-	echo "   > Message = $command"
+# Check node package dependencies
+if [[ "$missing" == "no" ]]; then
+	nodeDependencies=("irc" "xdcc" "progress")
+	for nodeDependencies_i in $(seq 0 $((${#nodeDependencies[@]}-1)))
+	do
+		exists=$(npm list -g | grep ${nodeDependencies[$nodeDependencies_i]} || echo "no")
+		if [[ "$exists" == "no" ]]; then
+			echo "Missing npm package ${nodeDependencies[$nodeDependencies_i]}:"
+			echo "   > sudo npm install -g ${nodeDependencies[$nodeDependencies_i]}"
+			missing="yes"
+		fi
+	done
+fi
+# Check for node.js file
+downloadFile="./irc-download.js"
+if [ ! -f "$downloadFile" ]; then
+	echo "Download 'irc-download.js' file and drop it in $PWD directory"
+	missing="yes"
+fi
+if [[ "$missing" == "yes" ]]; then
+	exitNow
 else
-	echo "   > ${red}${bold}Error!${reset}"
-	echo
-	echo "   > packageRequest_url = $packageRequest_url"
-	echo "   > botRequest_url = $botRequest_url"
-	echo
-	read -n 1 -s -r -p "Press any key to exit!"
-	exit 1
+	echo "Dependencies check ${green}${bold}passed!${reset}"
 fi
 echo
 
-# 6. Download from Irssi (IRC XDCC)
-echo "${bold}6. Starting Irssi client${reset}"
-tmux_window=$(echo "irssi_$RANDOM")
-nick=$(echo "dl_$RANDOM")
-tmux new-session -d -t $tmux_window
-tmux send-keys "irssi" Enter
-sleep 1
-echo "   > Download directory = $PWD"
-echo "   > Nick $nick"
-echo "   > Connecting to Rizon #nibl"
-tmux send-keys "/SET dcc_download_path $PWD" Enter
-tmux send-keys "/SET dcc_autoget ON" Enter
-tmux send-keys "/SET nick $nick" Enter
-tmux send-keys "/SET alternate_nick dl_$RANDOM" Enter
-tmux send-keys "/SET user_name $nick" Enter
-tmux send-keys "/SET real_name $nick" Enter
-tmux send-keys "/connect irc.rizon.net" Enter
-sleep 2
-tmux send-keys "/join #nibl" Enter
-sleep 2
-echo "   > Messaging Bot = $command"
-tmux send-keys "$command" Enter
-echo
 
-# 7. Monitor Download progress
-echo "${bold}7. Downloading${reset}"
-sleep 5
-SECONDS=0
-downloadedFile_sizekbits="0"
-downloadedFile_sizeMB=$((downloadedFile_sizekbits/(1024*1024)))
-downloadedFile_percent="0"
-previous_downloadedFile_sizekbits=$downloadedFile_sizekbits
-nochange_counter="0"
-while [[ "$downloadedFile_sizekbits" != "$packageRequest_sizekbits" && "$downloadedFile_percent" != "100" ]]
-do
-	# Fetch Elapsed Time
-	elapsed=$SECONDS
-	downloadedFile_elapsedTime=$((elapsed/60))"M "$((elapsed%60))"S "
-	
-	# Fetch Progress Details
-	previous_downloadedFile_sizekbits=$downloadedFile_sizekbits
-	previous_downloadedFile_sizekbits="${previous_downloadedFile_sizekbits:-0}" # Set Default as 0
-	downloadedFile_sizekbits=$(ls -lt "$packageRequest_name" 2>/dev/null | awk '{print $5}') # Fetch only the Bytes column from output
-	downloadedFile_sizekbits="${downloadedFile_sizekbits:-0}" # Set Default as 0
-	downloadedFile_sizeMB=$((downloadedFile_sizekbits/(1024*1024)))
-	downloadedFile_percent=$(echo "scale=0; ($downloadedFile_sizekbits*100)/$packageRequest_sizekbits" | bc)
-	downloadedFile_percent="${downloadedFile_percent:-0}" # Set Default as 0
-	
-	# Check if Download is still in progress?
-	if [[ "$previous_downloadedFile_sizekbits" ==  "$downloadedFile_sizekbits" ]]
-	then
-		nochange_counter=$((nochange_counter + 1))
-		if [[ "$nochange_counter" == "10" ]]
+# 1. Fetch Bots
+echo "${bold}1. Fetching Bots${reset}"
+echo
+botRequest_url="https://api.nibl.co.uk/nibl/bots/"
+botRequest=$(curl -s -X GET --header 'Accept: application/json' "$botRequest_url")
+botRequest_status=$(echo $botRequest | jq -r '.status')
+botRequest_contents=$(echo $botRequest | jq -r '.content')
+botCount=$(echo $botRequest_contents | jq -r 'length')
+if [[ "$botCount" == 0 ]]; then
+	echo "${red}${bold}No Bots were returned from Rizon #nibl${reset}"
+	echo "${red}${bold}Check URL: ${reset}$botRequest_url"
+	exitNow
+fi
+botIDs=($(echo $botRequest_contents | jq -r '.[].id'))
+botNames=($(echo $botRequest_contents | jq -r '.[].name'))
+# Usage: botName=$(fetchBotName "16" "$botRequest_contents" "$botCount")
+fetchBotName () {
+	local findId=$1
+	local contents=$2
+	local count=$3
+	local return_botName="not_found"
+	for bot_i in $(seq 0 $count)
+	do
+		botId=$(echo $contents | jq -r --argjson bot_i "$bot_i" '.[$bot_i].id')
+		botName=$(echo $contents | jq -r --argjson bot_i "$bot_i" '.[$bot_i].name')
+		if [[ "$findId" ==  "$botId" ]]
 		then
-			echo
-			echo -n "   > ${green}${bold}No change in Download progress for past 10 checks! Skipping Monitoring!${reset}"
+			return_botName=$botName
 			break
 		fi
-	else
-		nochange_counter="0"
-	fi
-	
-	# Display progress message
-	echo -ne "\r   > ${packageRequest_name:0:30}... - $((downloadedFile_sizeMB))MB - $downloadedFile_elapsedTime [${green}${bold}$((downloadedFile_percent))%${reset}]     "
-	sleep 1
-done
-echo
-echo "   > Waiting for 5 seconds for file to save"
-sleep 5
+	done
+	echo $return_botName
+}
+echo "   > URL = $botRequest_url"
+echo "   > Status = $botRequest_status"
+echo "   > Available Bots = $botCount"
 echo
 
-# 8. Exit (after confirmation)
-read -n 1 -s -r -p "Press ${bold}any key${reset} to kill irssi and close this terminal"
+
+# 2. Get Input
+echo "${bold}2. Get Input${reset}"
 echo
-tmux send-keys "/quit" Enter
-sleep 1
-tmux send-keys "xdg-open \"$packageRequest_name\" && exit" Enter
-#tmux kill-session -t $tmux_window
-echo "Enjoy the content!"
+read -p "${green}${bold}Enter Search Query${reset} [Example, One Piece 1080p]: " input_query
+input_query=${input_query// /"%20"}
+read -p "${green}${bold}Enter Episode Number${reset} [Example, 15 or 15-20 or 15,17,21]: " input_episodeNumber
+input_episodeNumber=${input_episodeNumber// /""}
+episodeArray=()
+if [[ $input_episodeNumber == *","* ]] || [[ $input_episodeNumber == *"-"* ]]; then
+	# Convert (,) seperated string to episodeArray
+	if [[ "$input_episodeNumber" == *","* ]]; then
+		input_episodeNumber=${input_episodeNumber//,/" "}
+		episodeArray=($input_episodeNumber)
+		
+	# Convert (-) seperated range to episodeArray
+	elif [[ "$input_episodeNumber" == *"-"* ]]; then
+		input_episodeNumber=${input_episodeNumber//-/" "}
+		episodeArray=($input_episodeNumber)
+		episodeArray=( $(seq $((${episodeArray[0]})) $((${episodeArray[1]}))) )
+	fi
+else
+	episodeArray=($input_episodeNumber)
+fi
+echo
+
+
+# 3. Fetch Packages for each Episode (and display in table-like format)
+echo "${bold}3. Fetching Packages (per episode)${reset}"
+echo
+printf "%-3s| %-5s| %-8s| %-s\n" "#ID" "Size" "#Episode" "Package Name"
+printf "%.50s\n" "--------------------------------------------------"
+rowNumber=0
+packageNames=("not_applicable")
+packageNumbers=("not_applicable")
+botNames=("not_applicable")
+botMessages=("not_generated")
+for episode_i in $(seq 0 $((${#episodeArray[@]}-1)))
+do
+	# Fetch packages from API (using $input_query & $episodeArray)
+	checkEpisode=${episodeArray[$episode_i]}
+	packageRequest_url="https://api.nibl.co.uk/nibl/search?query=$input_query&episodeNumber=$checkEpisode"
+	packageRequest=$(curl -s -X GET --header 'Accept: application/json' "$packageRequest_url")
+	packageRequest_status=$(echo $packageRequest | jq -r '.status')
+	packageRequest_contents=$(echo $packageRequest | jq -r '.content')
+	packageCount=$(echo $packageRequest_contents | jq 'length')
+	if [[ "$packageCount" == 0 ]]; then
+		continue
+	fi
+	
+	for package_i in $(seq 0 $((packageCount-1)))
+	do
+		# Collect attributes for each "row" of packages
+		row=$(echo $packageRequest_contents | jq -r --argjson package_i "$package_i" '.[$package_i]')
+		size=$(echo $row | jq -r '.size')
+		episodeNumber=$(echo $row | jq -r '.episodeNumber')
+		packageName=$(echo $row | jq -r '.name')
+		botID=$(echo $row | jq -r '.botId')
+		botName=$(fetchBotName "$botID" "$botRequest_contents" "$botCount")
+		packageNumber=$(echo $row | jq -r '.number')
+	
+		if [[ "$botName" != "not_found" ]]; then
+			# Display attributes
+			rowNumber=$(($rowNumber+1))
+			printf "%3d| %-5s| %8d| %-s\n" "$rowNumber" "$size" "$episodeNumber" "$packageName"
+			
+			# Collect Messages
+			packageNames[rowNumber]=$(echo "$packageName")
+			packageNumbers[rowNumber]=$(echo "$packageNumber")
+			botNames[rowNumber]=$(echo "$botName")
+			botMessages[rowNumber]=$(echo "/msg $botName xdcc send #$packageNumber")
+		else
+			botMessages[rowNumber]=$(echo "not_generated")
+		fi
+	done
+done
+if [[ "$rowNumber" == 0 ]]; then
+	echo "${red}${bold}No Packages were returned from Rizon #nibl${reset}"
+	echo "${red}${bold}Check URL: ${reset}https://api.nibl.co.uk/nibl/search?query=$input_query&episodeNumber="
+	exitNow
+fi
+echo
+
+
+# 4. Select Packages
+echo "${bold}4. Select Packages${reset}"
+echo
+read -p "${green}${bold}Select from List${reset} [Example, 3,6,10]: " selected_listIDs
+selected_listIDs=${selected_listIDs// /""}
+selected_listIDs=${selected_listIDs//,/" "}
+selected_listIDs=($selected_listIDs)
+echo
+
+
+# 5. Download Selected Packages
+echo "${bold}5. Downloading Packages${reset}"
+echo
+server="irc.rizon.net"
+channel="nibl"
+for selected_i in $(seq 0 $((${#selected_listIDs[@]}-1)))
+do
+	selected_rowNumber=${selected_listIDs[$selected_i]}
+	echo "$(($selected_i+1)). ${packageNames[$selected_rowNumber]}" 
+	node irc-download.js "$server" "$channel" "${botNames[$selected_rowNumber]}" "${packageNumbers[$selected_rowNumber]}" "$HOME/Downloads/"
+done
+
+# 6. Open ~/Downloads folder
+read -n 1 -s -r -p "Press ${green}${bold}any key${reset} to exit"
+xdg-open "$HOME/Downloads/" & exit
