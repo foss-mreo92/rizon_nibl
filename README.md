@@ -1,8 +1,9 @@
 <pre>
-# rizon_nibl
+<b># rizon_nibl</b>
 
-A simple Bash script to download anime from Rizon #nibl using NodeJS packages such as irc, xdcc and progress. 
-You can batch your downloads as well.
+A simple Bash script to download anime from irc.rizon.net #nibl using NodeJS packages - irc, xdcc and progress.
+
+Allows you to queue selections and download them sequentially.
 <hr/><b>Sample run of the script pasted below</b> -
 
 <b>0. Checking dependencies</b>
@@ -71,7 +72,7 @@ Dependencies check <b>passed!</b>
    
 Press <b>any key</b> to exit
 <hr/><b>Dependencies (Linux)</b> -
-download both <a href="https://github.com/foss-mreo92/rizon_nibl/blob/main/irssi_nibl.sh" target="_blank">irssi_nibl_batch.sh</a>, <a href="https://github.com/foss-mreo92/rizon_nibl/blob/main/irc-download.js" target="_blank">irc-download.js</a> files in same directory
+Download both <a href="https://github.com/foss-mreo92/rizon_nibl/blob/main/irssi_nibl.sh">irssi_nibl_batch.sh</a>, <a href="https://github.com/foss-mreo92/rizon_nibl/blob/main/irc-download.js">irc-download.js</a> files in same directory
 > sudo apt install curl jq grep node
 > sudo npm install -g irc xdcc progress
 
@@ -79,7 +80,7 @@ download both <a href="https://github.com/foss-mreo92/rizon_nibl/blob/main/irssi
 Open your linux terminal and run ./irssi_nibl_batch.sh
 
 <b>Credits</b>:
-To the developer who built the <a href="https://api.nibl.co.uk/swagger-ui.html" target="_blank">APIs</a>
+To the developer who built the <a href="https://api.nibl.co.uk/swagger-ui.html">APIs</a>
 
 <b>Disclaimer / Notice</b>:
 Not encouraging piracy. Just demonstrating a simple bash script to download files on IRC.
